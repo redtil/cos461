@@ -182,7 +182,7 @@ void sr_handlepacket(struct sr_instance* sr,
     if(hit)
     {
       /*Forward the received frame out with new MAC address*/
-        send_frame(sr, packet, len, interface);
+        /*send_frame(sr, packet, len, interface);*/
     }
     else{
         /*Send ARP request for desired next-hop IP*/
