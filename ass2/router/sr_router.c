@@ -151,12 +151,12 @@ void sr_handlepacket(struct sr_instance* sr,
           unsigned int len,
           char* interface/* lent */)
   {
-     //Decrement TTL by 1 and recompute checksum
+     /*Decrement TTL by 1 and recompute checksum*/
      sr_ip_hdr_t *iphdr = (sr_ip_hdr_t *)(packet);
      iphdr->ipttl--;
      if(iphdr->ipttl > 0)
      {
-        //Find longest-match IP in routing table
+        /*Find longest-match IP in routing table*/
         find_ip(sr, packet, len, interface);
      }
      else{
@@ -167,7 +167,7 @@ void sr_handlepacket(struct sr_instance* sr,
   void router_find_ip(sr, packet, len, interface)
   {
 
-    //find longest-match IP in routing table
+    /*find longest-match IP in routing table*/
     if(hit)
     {
         search_cache_MAC_addr(sr, packet, len, interface);
@@ -178,14 +178,14 @@ void sr_handlepacket(struct sr_instance* sr,
   }
   void search_cache_MAC_addr(sr, packet, len, interface)
   {
-    //find MAC_ADD that corresponds to IP address
+    /*find MAC_ADD that corresponds to IP address*/
     if(hit)
     {
-      //Forward the received frame out with new MAC address
+      /*Forward the received frame out with new MAC address*/
         send_frame(sr, packet, len, interface);
     }
     else{
-        //Send ARP request for desired next-hop IP
+        /*Send ARP request for desired next-hop IP*/
 
     }
 
