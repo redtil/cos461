@@ -169,12 +169,12 @@ void router_ip_not_same(struct sr_instance* sr,
     if(ntohs((sr_arp_hdr_t *)packet->ar_op)) == arp_op_request)
     {
       size_t n =  (sr_ethernet_hdr_t*)packet->ether-dhost;
-      sr_ethernet_hdr_t *temp = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether_dhost));
-      sr_ethernet_hdr_t *dest = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether_dhost));
+      sr_ethernet_hdr_t *temp = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
+      sr_ethernet_hdr_t *dest = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
    
-      memcpy(temp, (sr_ethernet_hdr_t*)packet->ether_dhost, n);
-      memcpy(dest, (sr_ethernet_hdr_t*)packet->ether_dhost, n);
-      memcpy((sr_ethernet_hdr_t*)packet->ether_dhost, temp, n);
+      memcpy(temp, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
+      memcpy(dest, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
+      memcpy((sr_ethernet_hdr_t*)packet->ether-dhost, temp, n);
 
 
     }
