@@ -168,7 +168,7 @@ void sr_handlepacket(struct sr_instance* sr,
   {
 
     /*find longest-match IP in routing table*/
-    if(hit)
+    if()
     {
         search_cache_MAC_addr(sr, packet, len, interface);
     }
@@ -179,7 +179,7 @@ void sr_handlepacket(struct sr_instance* sr,
   void search_cache_MAC_addr(sr, packet, len, interface)
   {
     /*find MAC_ADD that corresponds to IP address*/
-    if(hit)
+    if()
     {
       /*Forward the received frame out with new MAC address*/
         /*send_frame(sr, packet, len, interface);*/
