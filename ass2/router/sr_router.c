@@ -140,8 +140,6 @@ void sr_init(struct sr_instance* sr)
       memcpy((sr_ethernet_hdr_t*)packet->ether-dhost, temp, n);
       (sr_arp_hdr_t*)packet->ar_op = arp_op_reply;
       int sr_send_packet(sr, packet, len, interface);
-
-
     }
     else {
 
