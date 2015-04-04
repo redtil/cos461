@@ -190,23 +190,22 @@ void sr_handlepacket(struct sr_instance* sr,
     }
 
   }
-  void router_ip_same(struct sr_instance* sr,
-          uint8_t * packet/* lent */,
-          unsigned int len,
-          char* interface/* lent */)
-  {
-    /*Check if the packet is an ICMP echo request w/ valid checksum*/
-      if(!((cksum(packet, len)) && (ip_protocol(packet))))
-    {
-      //check if the packet contains TCP
-      if()
-      {
-        //Port unreachable (type 3, code 3)
-      }
-      else{
-          //drop packet
-      }
-    }
+  // void router_ip_same(struct sr_instance* sr,
+  //         uint8_t * packet/* lent */,
+  //         unsigned int len,
+  //         char* interface/* lent */)
+  // {
+  //   /*Check if the packet is an ICMP echo request w/ valid checksum*/
+  //     if(!((cksum(packet, len)) && (ip_protocol(packet))))
+  //   {
+  //     //check if the packet contains TCP
+  //     if()
+  //     {
+  //       //Port unreachable (type 3, code 3)
+  //     }
+  //     else{
+  //         //drop packet
+  //     }
+  //   }
 
-
-  }
+  // }
