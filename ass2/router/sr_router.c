@@ -196,7 +196,7 @@ void sr_handlepacket(struct sr_instance* sr,
           char* interface/* lent */)
   {
     /*Check if the packet is an ICMP echo request w/ valid checksum*/
-      if(!(cksum(packet, len) && ip_protocol(packet)))
+      if(!((cksum(packet, len)) && (ip_protocol(packet))))
     {
       //check if the packet contains TCP
       if()
