@@ -131,13 +131,15 @@ void sr_init(struct sr_instance* sr)
   {
     if(ntohs((sr_arp_hdr_t *)packet->ar_op)) == arp_op_request)
     {
-      size_t n =  (sr_ethernet_hdr_t*)packet->ether-dhost;
-      sr_ethernet_hdr_t *temp = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
-      sr_ethernet_hdr_t *dest = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
+      size_t n =  (sr_ethernet_hdr_t*)packet->ether_dhost;
+      sr_ethernet_hdr_t *temp = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether_dhost));
+      sr_ethernet_hdr_t *dest = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether_dhost));
    
       memcpy(temp, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
       memcpy(dest, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
       memcpy((sr_ethernet_hdr_t*)packet->ether-dhost, temp, n);
+      (sr_arp_hdr_t*)packet->ar_op = arp_op_reply;
+      int sr_send_packet(sr, packet, len, interface);
 
 
     }
@@ -191,7 +193,7 @@ void sr_init(struct sr_instance* sr)
 
   }
   void router_ip_same(struct sr_instance* sr,
-          uint8_t * packet/* lent */
+          uint8_t * packet/* lent */,
          unsigned int len,
           char* interface/* lent */)
  {
