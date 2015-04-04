@@ -131,10 +131,15 @@ void sr_handlepacket(struct sr_instance* sr,
   {
     if(ntohs((sr_arp_hdr_t *)packet->ar_op)) == arp_op_request)
     {
-      sr_ethernet_hdr_t *temp = (sr_ethernet_hdr_t*)packet->ether-dhost
-      sr_ethernet_hdr_t *dest = (sr_ethernet_hdr_t*)packet->ether-dhost;
-      memcpy(dest, src, size_t n);
-     
+      size_t n =  (sr_ethernet_hdr_t*)packet->ether-dhost;
+      sr_ethernet_hdr_t *temp = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
+      sr_ethernet_hdr_t *dest = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
+   
+      memcpy(temp, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
+      memcpy(dest, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
+      memcpy((sr_ethernet_hdr_t*)packet->ether-dhost, temp, n);
+
+
     }
     else {
 
@@ -194,7 +199,7 @@ void sr_handlepacket(struct sr_instance* sr,
       if(!(cksum(packet, len) && ip_protocol(packet)))
     {
       //check if the packet contains TCP
-      if(yes)
+      if()
       {
         //Port unreachable (type 3, code 3)
       }
