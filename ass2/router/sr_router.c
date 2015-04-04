@@ -89,7 +89,7 @@ void sr_init(struct sr_instance* sr)
  * the method call.
  *
  *---------------------------------------------------------------------*/
- void router_ip_same(struct sr_instance* sr,
+   void router_ip_same(struct sr_instance* sr,
           uint8_t * packet/* lent */,
          unsigned int len,
           char* interface/* lent */)
@@ -114,8 +114,8 @@ void router_ip_not_same(struct sr_instance* sr,
         
      }    
   }
-
-  void router_find_ip(sr, packet, len, interface)
+  
+   void router_find_ip(sr, packet, len, interface)
   {
 
     /*find longest-match IP in routing table*/
@@ -127,6 +127,8 @@ void router_ip_not_same(struct sr_instance* sr,
 
     }*/
   }
+
+ 
  void sr_handlepacket(struct sr_instance* sr,
         uint8_t * packet/* lent */,
         unsigned int len,
@@ -185,38 +187,8 @@ void router_ip_not_same(struct sr_instance* sr,
   }
 
   
-  void search_cache_MAC_addr(sr, packet, len, interface)
-  {
-    /*find MAC_ADD that corresponds to IP address*/
-    if()
-    {
-      /*Forward the received frame out with new MAC address*/
-        /*send_frame(sr, packet, len, interface);*/
-    }
-    else{
-        /*Send ARP request for desired next-hop IP*/
+ 
 
-    }
-
-  }
-  void router_ip_same(struct sr_instance* sr,
-          uint8_t * packet/* lent */,
-         unsigned int len,
-          char* interface/* lent */)
- {
-    /*Check if the packet is an ICMP echo request w/ valid checksum*/
-    if(!((cksum(packet, len)) && (ip_protocol(packet))))
-    {
-      /*check if the packet contains TCP*/
-      if()
-      {
-        /*Port unreachable (type 3, code 3)*/
-      }
-      else{
-          /*drop packet*/
-      }
-    }
-  }
  
  
 
