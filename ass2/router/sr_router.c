@@ -103,92 +103,9 @@ void sr_handlepacket(struct sr_instance* sr,
 
   printf("*** -> Received packet of length %d\n",len);
 
-  if(ethertype(packet)== ethertype_arp)
-  {
-    arptype(sr,packet,len,interface);
-  }
-  if(ethertype(packet) == ethertype_ip)
-  {
-    if(cksum(packet, len))
-    {
-      if("router's ip" == "dest ip" ){
-        router_ip_same(sr,packet,len, interface);
-      }
-      else{
-        router_ip_not_same(sr, packet, len,interface);
-      }
-    }
-    else{
-        /*drop packet*/
-    }
-  }
+ 
   }/* -- sr_handlepacket -- */
 
-  void arptype(struct sr_instance* sr,
-        uint8_t * packet/* lent */,
-        unsigned int len,
-        char* interface/* lent */)
-  {
-    if(ntohs((sr_arp_hdr_t *)packet->ar_op)) == arp_op_request)
-    {
-      size_t n =  (sr_ethernet_hdr_t*)packet->ether-dhost;
-      sr_ethernet_hdr_t *temp = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
-      sr_ethernet_hdr_t *dest = malloc(sizeof((sr_ethernet_hdr_t*)packet->ether-dhost));
-   
-      memcpy(temp, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
-      memcpy(dest, (sr_ethernet_hdr_t*)packet->ether-dhost, n);
-      memcpy((sr_ethernet_hdr_t*)packet->ether-dhost, temp, n);
-
-
-    }
-    else {
-
-    }
-  }
-
-  void router_ip_not_same(struct sr_instance* sr,
-          uint8_t * packet/* lent */,
-          unsigned int len,
-          char* interface/* lent */)
-  {
-     /*Decrement TTL by 1 and recompute checksum*/
-     sr_ip_hdr_t *iphdr = (sr_ip_hdr_t *)(packet);
-     iphdr->ipttl--;
-     if(iphdr->ipttl > 0)
-     {
-        /*Find longest-match IP in routing table*/
-        find_ip(sr, packet, len, interface);
-     }
-     else{
-        
-     }    
-  }
-
-  void router_find_ip(sr, packet, len, interface)
-  {
-
-    /*find longest-match IP in routing table*/
-    if()
-    {
-        search_cache_MAC_addr(sr, packet, len, interface);
-    }
-    else{
-
-    }
-  }
-  void search_cache_MAC_addr(sr, packet, len, interface)
-  {
-    /*find MAC_ADD that corresponds to IP address*/
-    if()
-    {
-      /*Forward the received frame out with new MAC address*/
-        /*send_frame(sr, packet, len, interface);*/
-    }
-    else{
-        /*Send ARP request for desired next-hop IP*/
-
-    }
-
-  }
+ 
 
 
