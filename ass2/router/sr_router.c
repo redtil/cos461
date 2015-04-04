@@ -129,7 +129,7 @@ void sr_init(struct sr_instance* sr)
         unsigned int len,
         char* interface/* lent */)
   {
-    
+
     if(ntohs((sr_arp_hdr_t *)packet->ar_op)) == arp_op_request)
     {
       size_t n =  (sr_ethernet_hdr_t*)packet->ether_dhost;
