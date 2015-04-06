@@ -95,10 +95,10 @@ void sr_init(struct sr_instance* sr)
         char* interface/* lent */)
   {
     struct sr_if *cur = sr->if_list;
-    struct sr_if next;
+    struct sr_if *next;
     for(;next!= NULL; cur = next)
     {
-      if(cur.ip == ((sr_arp_hdr *)packet)->ar_tip)
+      if(cur->ip == ((sr_arp_hdr_t *)packet)->ar_tip)
         return 1;
       else
         next = cur->next;
@@ -118,7 +118,7 @@ void send_echo_reply(struct sr_instance* sr,
        unsigned int len,
         char* interface/* lent */)
   {
-    if((((sr_icmp_hdr_t*)packet)->icmp_type == 0)&& (cksum(packet, len)==((sr_ip_hdr*)packet)->ip_sum))
+    if((((sr_icmp_hdr_t*)packet)->icmp_type == 0)&& (cksum(packet, len)==((sr_ip_hdr_t*)packet)->ip_sum))
     {
       send_echo_reply(sr,packet,len,interface);
     }
@@ -132,15 +132,15 @@ void send_echo_reply(struct sr_instance* sr,
    void search_cache_MAC_addr(sr, packet, len, interface)
   {
     /*find MAC_ADD that corresponds to IP address*/
-    if()
-    {
+    /*if()
+    {*/
       /*Forward the received frame out with new MAC address*/
         /*send_frame(sr, packet, len, interface);*/
-    }
-    else{
+   /* }*/
+    /*else*/
         /*Send ARP request for desired next-hop IP*/
 
-    }
+    /*}*/
 
   }
 
@@ -204,7 +204,7 @@ next = cur->next;
 
   if(ntohs(((sr_arp_hdr_t *)packet)->ar_op) == arp_op_request)
   {
-    //look at arp_reply_fill
+    /*look at arp_reply_fill*/
     memcpy(((sr_ethernet_hdr_t*)packet)->ether_dhost, ((sr_ethernet_hdr_t*)packet)->ether_shost,ETHER_ADDR_LEN);
     memcpy(((sr_ethernet_hdr_t*)packet)->ether_shost, ((struct sr_if*)interface)->addr,ETHER_ADDR_LEN);
 
@@ -244,10 +244,16 @@ next = cur->next;
   else if(ethertype(packet) == ethertype_ip)
   {
 	  printf("it's ip. \n");
-	  print_hdr_eth(packet);
-    if(cksum(packet, len) == ((sr_ip_hdr*) packet))->ip_sum)
+	  
+	printf("packet old check sum value: %d \n", ((sr_ip_hdr_t*) packet)->ip_sum);
+	uint16_t cp = ((sr_ip_hdr_t*) packet)->ip_sum;
+	((sr_ip_hdr_t*) packet)->ip_sum= 0;
+printf("packet zeroed out check sum value: %d \n", ((sr_ip_hdr_t*) packet)->ip_sum);
+printf("check sum value: %d \n", cksum((sr_ip_hdr_t*)packet,((sr_ip_hdr_t*)packet)->ip_len));
+	printf("packet check sum value: %d \n", cp);
+    if(cksum((sr_ip_hdr_t*)packet, ntohs(((sr_ip_hdr_t*)packet)->ip_len)) == cp)
     {
-
+	printf("the checksum works. \n");
       if(router_ip_check(sr, packet, len, interface)){
         router_ip_same(sr,packet,len, interface);
       }
