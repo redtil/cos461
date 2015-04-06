@@ -89,12 +89,59 @@ void sr_init(struct sr_instance* sr)
  * the method call.
  *
  *---------------------------------------------------------------------*/
-   void router_ip_same(struct sr_instance* sr,
-          uint8_t * packet/* lent */,
-         unsigned int len,
-          char* interface/* lent */)
- {
-    
+ int router_ip_check(struct sr_instance* sr,
+        uint8_t * packet/* lent */,
+       unsigned int len,
+        char* interface/* lent */)
+  {
+    struct sr_if *cur = sr->if_list;
+    struct sr_if next;
+    for(;next!= NULL; cur = next)
+    {
+      if(cur.ip == ((sr_arp_hdr *)packet)->ar_tip)
+        return 1;
+      else
+        next = cur->next;
+    }
+    return 0;
+  }
+void send_echo_reply(struct sr_instance* sr,
+        uint8_t * packet/* lent */,
+       unsigned int len,
+        char* interface/* lent */)
+{
+  
+
+}
+ void router_ip_same(struct sr_instance* sr,
+        uint8_t * packet/* lent */,
+       unsigned int len,
+        char* interface/* lent */)
+  {
+    if((((sr_icmp_hdr_t*)packet)->icmp_type == 0)&& (cksum(packet, len)==((sr_ip_hdr*)packet)->ip_sum))
+    {
+      send_echo_reply(sr,packet,len,interface);
+    }
+    else
+    {
+
+    }
+  }
+
+  
+   void search_cache_MAC_addr(sr, packet, len, interface)
+  {
+    /*find MAC_ADD that corresponds to IP address*/
+    if()
+    {
+      /*Forward the received frame out with new MAC address*/
+        /*send_frame(sr, packet, len, interface);*/
+    }
+    else{
+        /*Send ARP request for desired next-hop IP*/
+
+    }
+
   }
 
 void router_find_ip(sr, packet, len, interface)
@@ -129,51 +176,52 @@ void router_ip_not_same(struct sr_instance* sr,
   }
 
 void send_queued_IP_packets(struct sr_instance* sr,
-        uint8_t * packet/* lent */,
-        unsigned int len,
-        char* interface/* lent */){
-	struct sr_arpreq *cur = sr->cache.requests; 
-	struct sr_arpreq * next;	
-	for (; next != NULL; cur = next )
+      uint8_t * packet/* lent */,
+      unsigned int len,
+      char* interface/* lent */){
+struct sr_arpreq *cur = sr->cache.requests; 
+struct sr_arpreq * next;	
+for (; next != NULL; cur = next )
 {
-	if(cur->ip == ((sr_arp_hdr_t *)packet)->ar_sip)
-	{
+if(cur->ip == ((sr_arp_hdr_t *)packet)->ar_sip)
+{
 	memcpy(((sr_ethernet_hdr_t*)packet)->ether_dhost, 	
 	((sr_ethernet_hdr_t*)packet)->ether_shost, 	    		ETHER_ADDR_LEN);
       memcpy(((sr_ethernet_hdr_t*)packet)->ether_shost, ((struct sr_if*) interface)->addr,ETHER_ADDR_LEN);
 	sr_send_packet(sr, packet, len, interface);
-	}
-	next = cur->next;
 }
+next = cur->next;
 }
-  
-   void arptype(struct sr_instance* sr,
-        uint8_t * packet/* lent */,
-        unsigned int len,
-        char* interface/* lent */)
+
+}
+
+ void arptype(struct sr_instance* sr,
+      uint8_t * packet/* lent */,
+      unsigned int len,
+      char* interface/* lent */)
+{
+  print_hdr_eth(packet);
+
+  if(ntohs(((sr_arp_hdr_t *)packet)->ar_op) == arp_op_request)
   {
-    print_hdr_eth(packet);
+    //look at arp_reply_fill
+    memcpy(((sr_ethernet_hdr_t*)packet)->ether_dhost, ((sr_ethernet_hdr_t*)packet)->ether_shost,ETHER_ADDR_LEN);
+    memcpy(((sr_ethernet_hdr_t*)packet)->ether_shost, ((struct sr_if*)interface)->addr,ETHER_ADDR_LEN);
 
-    if(ntohs(((sr_arp_hdr_t *)packet)->ar_op) == arp_op_request)
-    {
+    ((sr_arp_hdr_t *)packet)->ar_tip = ((sr_arp_hdr_t *)packet)->ar_sip ;
+    ((sr_arp_hdr_t *)packet)->ar_sip = ((struct sr_if*)interface)-> ip;
+    memcpy(((sr_arp_hdr_t *)packet)->ar_tha, ((sr_arp_hdr_t*)packet)->ar_sha, ETHER_ADDR_LEN);
+    memcpy(((sr_arp_hdr_t *)packet)->ar_sha, ((struct sr_if *)interface)->addr, ETHER_ADDR_LEN);
 
-      memcpy(((sr_ethernet_hdr_t*)packet)->ether_dhost, ((sr_ethernet_hdr_t*)packet)->ether_shost, 	    		ETHER_ADDR_LEN);
-      memcpy(((sr_ethernet_hdr_t*)packet)->ether_shost, ((struct sr_if*)interface)->addr,ETHER_ADDR_LEN);
-	
-((sr_arp_hdr_t *)packet)->ar_tip = ((sr_arp_hdr_t *)packet)->ar_sip ;
-((sr_arp_hdr_t *)packet)->ar_sip = ((struct sr_if*)interface)-> ip;
-memcpy(((sr_arp_hdr_t *)packet)->ar_tha, ((sr_arp_hdr_t*)packet)->ar_sha, ETHER_ADDR_LEN);
-      memcpy(((sr_arp_hdr_t *)packet)->ar_sha, ((struct sr_if *)interface)->addr, ETHER_ADDR_LEN);
-
-      ((sr_arp_hdr_t*)packet)->ar_op = arp_op_reply;
-      sr_send_packet(sr, packet, len, interface);
-    }
-    else {
-	sr_arpcache_insert(&(sr->cache), ((sr_arp_hdr_t*)packet)->ar_sha, ((sr_arp_hdr_t*)packet)->ar_sip); 
-	send_queued_IP_packets(sr,packet,len, interface);
-	
-    }
+    ((sr_arp_hdr_t*)packet)->ar_op = arp_op_reply;
+    sr_send_packet(sr, packet, len, interface);
   }
+  else {
+  	sr_arpcache_insert(&(sr->cache), ((sr_arp_hdr_t*)packet)->ar_sha, ((sr_arp_hdr_t*)packet)->ar_sip); 
+  	send_queued_IP_packets(sr,packet,len, interface);
+
+  }
+}
  
  void sr_handlepacket(struct sr_instance* sr,
         uint8_t * packet/* lent */,
@@ -190,27 +238,29 @@ memcpy(((sr_arp_hdr_t *)packet)->ar_tha, ((sr_arp_hdr_t*)packet)->ar_sha, ETHER_
 
   if(ethertype(packet)== ethertype_arp)
   {
-	printf("it's an arp. \n");
+	  printf("it's an arp. \n");
     arptype(sr,packet,len,interface);
   }
-  if(ethertype(packet) == ethertype_ip)
+  else if(ethertype(packet) == ethertype_ip)
   {
-	printf("it's ip. \n");
-	print_hdr_eth(packet);
-    if(cksum(packet, len))
-
+	  printf("it's ip. \n");
+	  print_hdr_eth(packet);
+    if(cksum(packet, len) == ((sr_ip_hdr*) packet))->ip_sum)
     {
-      if("router's ip" == "dest ip" ){
+
+      if(router_ip_check(sr, packet, len, interface)){
         router_ip_same(sr,packet,len, interface);
       }
       else{
         router_ip_not_same(sr, packet, len,interface);
       }
     }
-    /*else{*/
-        /*drop packet*/
-   /* }*/
-   }
+      else
+     {
+        printf("packet dropped \n");
+     }
+  }
+   
   }/* -- sr_handlepacket -- */
 
   
