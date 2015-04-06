@@ -200,7 +200,8 @@ next = cur->next;
       unsigned int len,
       char* interface/* lent */)
 {
-  print_hdr_eth(packet);
+ 
+
 
   if(ntohs(((sr_arp_hdr_t *)packet)->ar_op) == arp_op_request)
   {
@@ -235,7 +236,7 @@ next = cur->next;
   assert(interface);
 
   printf("*** -> Received packet of length %d\n",len);
-
+  sr_ip_hdr_t * ip_hdr = (sr_ip_hdr_t *)(packet+sizeof(sr_ethernet_hdr_t));
   if(ethertype(packet)== ethertype_arp)
   {
 	  printf("it's an arp. \n");
@@ -243,15 +244,15 @@ next = cur->next;
   }
   else if(ethertype(packet) == ethertype_ip)
   {
-	  printf("it's ip. \n");
+	printf("it's ip. \n");
 	  
-	printf("packet old check sum value: %d \n", ((sr_ip_hdr_t*) packet)->ip_sum);
-	uint16_t cp = ((sr_ip_hdr_t*) packet)->ip_sum;
-	((sr_ip_hdr_t*) packet)->ip_sum= 0;
-printf("packet zeroed out check sum value: %d \n", ((sr_ip_hdr_t*) packet)->ip_sum);
-printf("check sum value: %d \n", cksum((sr_ip_hdr_t*)packet,((sr_ip_hdr_t*)packet)->ip_len));
+	printf("packet old check sum value: %d \n", ip_hdr->ip_sum);
+	uint16_t cp = ip_hdr->ip_sum;
+	ip_hdr->ip_sum = 0;
+	printf("packet zeroed out check sum value: %d \n", ip_hdr->ip_sum);
+	printf("check sum value: %d \n", cksum(ip_hdr,ntohs(ip_hdr->ip_len)));
 	printf("packet check sum value: %d \n", cp);
-    if(cksum((sr_ip_hdr_t*)packet, ntohs(((sr_ip_hdr_t*)packet)->ip_len)) == cp)
+    if(cksum(ip_hdr, ntohs(ip_hdr->ip_len) )== cp)
     {
 	printf("the checksum works. \n");
       if(router_ip_check(sr, packet, len, interface)){
