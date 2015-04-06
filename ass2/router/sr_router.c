@@ -140,9 +140,9 @@ void router_ip_not_same(struct sr_instance* sr,
       sr_ethernet_hdr_t *dest = malloc(sizeof(((sr_ethernet_hdr_t*)packet)->ether_shost));
    
       memcpy(temp, ((sr_ethernet_hdr_t*)packet)->ether_dhost, ETHER_ADDR_LEN);
-printf("*** -> Received1 %s\n",((sr_ethernet_hdr_t*)packet)->ether_dhost);
+      printf("*** -> Received1 %s\n",((sr_ethernet_hdr_t*)packet)->ether_dhost);
       memcpy(dest, ((sr_ethernet_hdr_t*)packet)->ether_dhost, ETHER_ADDR_LEN);
-printf("*** -> Received2 %s\n",((sr_ethernet_hdr_t*)packet)->ether_shost);
+      printf("*** -> Received2 %s\n",((sr_ethernet_hdr_t*)packet)->ether_shost);
       memcpy(((sr_ethernet_hdr_t*)packet)->ether_dhost, temp, ETHER_ADDR_LEN);
       ((sr_arp_hdr_t*)packet)->ar_op = arp_op_reply;
       sr_send_packet(sr, packet, len, interface);
@@ -167,12 +167,12 @@ printf("*** -> Received2 %s\n",((sr_ethernet_hdr_t*)packet)->ether_shost);
 
   if(ethertype(packet)== ethertype_arp)
   {
-printf("I am here");
+    printf("I am here");
     arptype(sr,packet,len,interface);
   }
   if(ethertype(packet) == ethertype_ip)
   {
-printf("I am here2");
+    printf("I am here2");
     /*if(cksum(packet, len))
     {
       if("router's ip" == "dest ip" ){
